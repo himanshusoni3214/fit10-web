@@ -1,238 +1,191 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, OrbitControls, Sphere, Text3D, Environment } from '@react-three/drei';
-import { motion } from 'framer-motion';
-import { ArrowRight, Barcode, Building2, CalendarCheck, HeartPulse, Mail, MapPin, Phone, Salad, ShoppingCart, Stethoscope, Utensils } from 'lucide-react';
+import { Environment, Float, OrbitControls } from '@react-three/drei';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowDown, Mail, Phone } from 'lucide-react';
 import { useRef } from 'react';
 import type { Group } from 'three';
 
-const green = '#14b86a';
-const navy = '#07111f';
+const chapters = [
+  ['01', 'Scan breakfast', 'A real meal becomes calories, protein, fiber, and health guidance in seconds.'],
+  ['02', 'Order lunch', 'Restaurant meals arrive with nutrition already attached. No manual logging.'],
+  ['03', 'Choose dinner', 'A recipe becomes a grocery list, pantry update, cooking guide, and nutrition log.'],
+  ['04', 'Shop smarter', 'Packaged food scans reveal ingredients, warnings, and cleaner alternatives.'],
+  ['05', 'Share progress', 'Dietitians, employers, and partners can support healthier decisions.'],
+];
 
-function NutritionWorld() {
+const modules = [
+  'Recipes',
+  'Groceries',
+  'Pantry',
+  'Restaurants',
+  'Barcode',
+  'Healthcare',
+  'Corporate Wellness',
+  'AI Coach',
+];
+
+function OrbitingFoodWorld() {
   const group = useRef<Group>(null);
-  useFrame((_, delta) => {
-    if (group.current) group.current.rotation.y += delta * 0.18;
-  });
+  const inner = useRef<Group>(null);
 
-  const nodes = [
-    { label: 'Recipes', position: [2.5, 0.9, 0] as [number, number, number], color: '#14b86a' },
-    { label: 'Grocery', position: [-2.2, 0.7, 0.8] as [number, number, number], color: '#8bdc5f' },
-    { label: 'Dining', position: [1.7, -1.2, -1.2] as [number, number, number], color: '#10a37f' },
-    { label: 'Health', position: [-2, -1.1, -0.6] as [number, number, number], color: '#2dd4bf' },
-    { label: 'Barcode', position: [0, 1.9, -1.3] as [number, number, number], color: '#a3e635' },
-  ];
+  useFrame(({ clock }, delta) => {
+    if (group.current) group.current.rotation.y += delta * 0.18;
+    if (inner.current) {
+      inner.current.rotation.x = Math.sin(clock.elapsedTime * 0.42) * 0.24;
+      inner.current.rotation.z += delta * 0.12;
+    }
+  });
 
   return (
     <group ref={group}>
-      <Float speed={1.2} rotationIntensity={0.35} floatIntensity={0.45}>
-        <Sphere args={[1, 48, 48]}>
-          <meshStandardMaterial color={green} roughness={0.28} metalness={0.18} />
-        </Sphere>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.35, 0.035, 16, 120]} />
-          <meshStandardMaterial color="#d8f9e7" roughness={0.2} />
+      <group ref={inner}>
+        <mesh>
+          <sphereGeometry args={[1.15, 64, 64]} />
+          <meshStandardMaterial color="#16c784" roughness={0.22} metalness={0.25} />
         </mesh>
-      </Float>
-      {nodes.map((node) => (
-        <Float key={node.label} speed={1.4} rotationIntensity={0.2} floatIntensity={0.35}>
-          <group position={node.position}>
-            <Sphere args={[0.22, 32, 32]}>
-              <meshStandardMaterial color={node.color} roughness={0.25} metalness={0.05} />
-            </Sphere>
-          </group>
-        </Float>
-      ))}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[1.62, 0.025, 24, 160]} />
+          <meshStandardMaterial color="#dfffea" roughness={0.16} metalness={0.1} />
+        </mesh>
+        <mesh rotation={[0.55, 0.2, 0.4]}>
+          <torusGeometry args={[1.98, 0.018, 24, 180]} />
+          <meshStandardMaterial color="#8eea65" roughness={0.22} />
+        </mesh>
+      </group>
+
+      {modules.map((label, index) => {
+        const angle = (index / modules.length) * Math.PI * 2;
+        const radius = index % 2 ? 2.65 : 3.25;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        const y = Math.sin(angle * 1.7) * 0.85;
+        return (
+          <Float key={label} speed={1 + index * 0.08} floatIntensity={0.6} rotationIntensity={0.4}>
+            <group position={[x, y, z]}>
+              <mesh>
+                <boxGeometry args={[0.7, 0.7, 0.18]} />
+                <meshStandardMaterial color={index % 2 ? '#07111f' : '#ffffff'} roughness={0.26} metalness={0.08} />
+              </mesh>
+              <mesh position={[0, 0, 0.13]}>
+                <sphereGeometry args={[0.12, 24, 24]} />
+                <meshStandardMaterial color={index % 2 ? '#8eea65' : '#16c784'} />
+              </mesh>
+            </group>
+          </Float>
+        );
+      })}
     </group>
   );
 }
 
-function Scene() {
+function CinematicScene() {
   return (
-    <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
-      <ambientLight intensity={1.4} />
-      <directionalLight position={[3, 5, 4]} intensity={2.2} />
-      <pointLight position={[-4, -2, 4]} intensity={1.2} color="#9be66f" />
-      <NutritionWorld />
+    <Canvas camera={{ position: [0, 0.4, 7], fov: 42 }}>
+      <color attach="background" args={["#f7fbf8"]} />
+      <ambientLight intensity={1.1} />
+      <directionalLight position={[4, 5, 4]} intensity={2.6} />
+      <pointLight position={[-3, -2, 5]} color="#8eea65" intensity={4} />
+      <OrbitingFoodWorld />
       <Environment preset="city" />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.45} />
+      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.25} />
     </Canvas>
   );
 }
 
-const sections = [
-  { id: 'story', label: 'Story' },
-  { id: 'platform', label: 'Platform' },
-  { id: 'partners', label: 'Partners' },
-  { id: 'investors', label: 'Investors' },
-  { id: 'roadmap', label: 'Roadmap' },
-  { id: 'contact', label: 'Contact' },
-];
-
-const modules = [
-  { icon: Salad, title: 'Consumer App', text: 'Track meals, recipes, groceries, restaurant orders, and health goals without manual calorie counting.' },
-  { icon: CalendarCheck, title: 'Recipe Intelligence', text: 'Turn recipes into nutrition, grocery lists, ingredient swaps, meal plans, and automatic tracking.' },
-  { icon: ShoppingCart, title: 'Grocery Intelligence', text: 'Barcode scanning, smart shopping lists, pantry tracking, expiry reminders, and healthier alternatives.' },
-  { icon: Utensils, title: 'Restaurant Platform', text: 'Restaurants publish nutrition-aware menus and orders automatically update customer nutrition.' },
-  { icon: Stethoscope, title: 'Healthcare', text: 'Dietitians and doctors can help users follow nutrition plans with better visibility.' },
-  { icon: Building2, title: 'Corporate Wellness', text: 'Employers support healthier teams with simple challenges, dashboards, and rewards.' },
-];
-
-const daySteps = [
-  ['Morning', 'Breakfast is scanned. Fit10X calculates calories, protein, carbs, fat, fiber, and micronutrients.'],
-  ['Lunch', 'A restaurant order is logged automatically because the menu already contains nutrition data.'],
-  ['Evening', 'A recipe becomes a grocery list, pantry update, cooking guide, and nutrition log.'],
-  ['Shopping', 'A barcode scan compares packaged foods and recommends healthier alternatives.'],
-  ['Care', 'A dietitian reviews progress and adjusts goals when the user needs support.'],
-];
-
-function Header() {
-  return (
-    <header className="site-header">
-      <a className="brand" href="#top" aria-label="Fit10X home">
-        <span className="brand-mark">F</span>
-        <span>Fit10X</span>
-      </a>
-      <nav>
-        {sections.map((item) => (
-          <a key={item.id} href={`#${item.id}`}>{item.label}</a>
-        ))}
-      </nav>
-      <a className="nav-cta" href="#contact">Become a Partner</a>
-    </header>
-  );
-}
-
 function App() {
+  const { scrollYProgress } = useScroll();
+  const heroY = useTransform(scrollYProgress, [0, 0.28], ['0%', '-18%']);
+  const sceneScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.18]);
+
   return (
-    <main id="top">
-      <Header />
-      <section className="hero">
-        <div className="hero-copy">
-          <motion.p className="eyebrow" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>AI nutrition platform</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-            Nutrition that follows you everywhere.
-          </motion.h1>
-          <motion.p className="hero-text" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            Fit10X connects recipes, groceries, restaurants, home cooking, and health goals into one AI-powered nutrition platform.
-          </motion.p>
-          <motion.div className="hero-actions" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}>
-            <a className="primary-btn" href="#story">Explore the Platform <ArrowRight size={18} /></a>
-            <a className="secondary-btn" href="#contact">Contact Fit10X</a>
-          </motion.div>
+    <main>
+      <nav className="topbar">
+        <a className="logo" href="#top"><span>F</span>Fit10X</a>
+        <div className="navlinks">
+          <a href="#journey">Journey</a>
+          <a href="#ecosystem">Ecosystem</a>
+          <a href="#roadmap">Roadmap</a>
+          <a href="#contact">Contact</a>
         </div>
-        <div className="hero-stage" aria-label="3D nutrition ecosystem visual">
-          <Scene />
-          <div className="floating-tag tag-one">Recipes</div>
-          <div className="floating-tag tag-two">Groceries</div>
-          <div className="floating-tag tag-three">Restaurants</div>
-          <div className="floating-tag tag-four">Healthcare</div>
-        </div>
+      </nav>
+
+      <section id="top" className="cinema-hero">
+        <motion.div className="scene-wrap" style={{ scale: sceneScale }}>
+          <CinematicScene />
+        </motion.div>
+        <motion.div className="hero-content" style={{ y: heroY }}>
+          <p className="kicker">3D nutrition intelligence</p>
+          <h1>One platform for every meal you plan, buy, cook, and eat.</h1>
+          <p>
+            Fit10X connects recipes, groceries, restaurants, barcode scans, and health goals into one AI-powered nutrition story.
+          </p>
+          <a href="#journey" className="hero-cta">Enter the story <ArrowDown size={18} /></a>
+        </motion.div>
+        <div className="orbit-label label-a">Recipes</div>
+        <div className="orbit-label label-b">Grocery</div>
+        <div className="orbit-label label-c">Restaurants</div>
+        <div className="orbit-label label-d">Health</div>
       </section>
 
-      <section className="problem section-pad">
-        <p className="eyebrow">The problem</p>
-        <h2>Nutrition is broken because everything is disconnected.</h2>
-        <div className="problem-grid">
-          {['Meal planning is separate.', 'Grocery shopping is separate.', 'Restaurant eating is separate.', 'Health tracking is separate.'].map((line) => <div className="quiet-card" key={line}>{line}</div>)}
-        </div>
+      <section className="manifesto">
+        <p>Nutrition should not live in five separate apps.</p>
+        <h2>Fit10X turns the full food journey into one connected experience.</h2>
       </section>
 
-      <section id="story" className="story section-pad">
-        <div className="section-heading">
-          <p className="eyebrow">One day with Fit10X</p>
-          <h2>One person. One platform. Every meal connected.</h2>
+      <section id="journey" className="scroll-story">
+        <div className="sticky-visual">
+          <div className="phone-shell">
+            <div className="phone-screen">
+              <div className="scan-ring" />
+              <span>AI Meal Scan</span>
+              <strong>Protein +42g</strong>
+              <small>Logged automatically</small>
+            </div>
+          </div>
+          <div className="floating-card recipe-card">Recipe → Grocery List</div>
+          <div className="floating-card cart-card">Cart → Pantry</div>
+          <div className="floating-card health-card">Progress → Care</div>
         </div>
-        <div className="timeline">
-          {daySteps.map(([title, text], index) => (
-            <motion.article className="timeline-card" key={title} initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <h3>{title}</h3>
+        <div className="story-copy">
+          {chapters.map(([number, title, text]) => (
+            <motion.article key={title} className="chapter" initial={{ opacity: 0, y: 80 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.45 }}>
+              <span>{number}</span>
+              <h2>{title}</h2>
               <p>{text}</p>
             </motion.article>
           ))}
         </div>
       </section>
 
-      <section id="platform" className="section-pad platform">
-        <div className="section-heading narrow">
-          <p className="eyebrow">Platform modules</p>
-          <h2>Six products connected by one nutrition intelligence layer.</h2>
-        </div>
-        <div className="module-grid">
-          {modules.map((module) => {
-            const Icon = module.icon;
-            return (
-              <motion.article className="module-card" key={module.title} whileHover={{ y: -8 }}>
-                <div className="module-icon"><Icon size={24} /></div>
-                <h3>{module.title}</h3>
-                <p>{module.text}</p>
-              </motion.article>
-            );
-          })}
+      <section id="ecosystem" className="ecosystem">
+        <p className="kicker">The ecosystem</p>
+        <h2>Recipe → grocery → pantry → cooking → restaurant → health.</h2>
+        <div className="ecosystem-track">
+          {['Recipe', 'Grocery', 'Pantry', 'Cooking', 'Restaurant', 'Barcode', 'Dietitian', 'Employer'].map((item) => (
+            <div className="eco-node" key={item}>{item}</div>
+          ))}
         </div>
       </section>
 
-      <section id="partners" className="section-pad partners">
-        <div className="section-heading narrow">
-          <p className="eyebrow">Why partners care</p>
-          <h2>Fit10X creates value for every side of the nutrition ecosystem.</h2>
-        </div>
-        <div className="partner-grid">
-          <div><h3>Restaurants</h3><p>Nutrition visibility, repeat customers, menu intelligence, and customer insights.</p></div>
-          <div><h3>Grocery Stores</h3><p>Recipe-to-cart, smart shopping lists, healthier product recommendations, and pantry sync.</p></div>
-          <div><h3>Healthcare</h3><p>Better patient nutrition tracking, less manual reporting, and personalized guidance.</p></div>
-          <div><h3>Employers</h3><p>Healthier teams, better wellness engagement, and potential insurance savings.</p></div>
-        </div>
-      </section>
-
-      <section id="investors" className="section-pad investor">
-        <div className="flywheel-card">
-          <p className="eyebrow">Investor story</p>
-          <h2>Every meal makes the platform smarter.</h2>
-          <p>Every recipe creates data. Every grocery scan creates data. Every restaurant order creates data. Better data improves recommendations, which attracts more users and more partners.</p>
-          <div className="flywheel">
-            {['Users', 'Meals', 'Data', 'Better AI', 'Partners', 'More Users'].map((item) => <span key={item}>{item}</span>)}
-          </div>
-        </div>
-      </section>
-
-      <section id="roadmap" className="section-pad roadmap">
-        <p className="eyebrow">Roadmap</p>
-        <h2>Clear, credible phases.</h2>
-        <div className="roadmap-grid">
-          <article><strong>Current Focus</strong><p>Consumer nutrition experience, recipes, grocery intelligence, and restaurant menu nutrition.</p></article>
-          <article><strong>Next</strong><p>Corporate wellness, healthcare partnerships, and retail integrations.</p></article>
-          <article><strong>Future</strong><p>Insurance partnerships, enterprise integrations, and developer APIs.</p></article>
-        </div>
-      </section>
-
-      <section id="contact" className="section-pad contact">
+      <section id="roadmap" className="roadmap-v2">
         <div>
-          <p className="eyebrow">Get in touch</p>
-          <h2>Build the future of nutrition with Fit10X.</h2>
-          <p>For investors, restaurants, grocery partners, healthcare, corporate wellness, and general partnerships.</p>
-          <div className="contact-lines">
-            <a href="mailto:info@fit10x.ca"><Mail size={18} /> info@fit10x.ca</a>
-            <a href="tel:+16479169693"><Phone size={18} /> 647-916-9693</a>
-            <span><MapPin size={18} /> Toronto, Canada</span>
-          </div>
+          <p className="kicker">Credible phasing</p>
+          <h2>Beautiful vision. Clear build order.</h2>
         </div>
-        <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
-          <input placeholder="Name" />
-          <input placeholder="Email" type="email" />
-          <input placeholder="Company" />
-          <select defaultValue="">
-            <option value="" disabled>I am interested in</option>
-            <option>Investor</option>
-            <option>Restaurant Partner</option>
-            <option>Grocery Partner</option>
-            <option>Healthcare</option>
-            <option>Corporate Wellness</option>
-            <option>General</option>
-          </select>
-          <textarea placeholder="Message" rows={4} />
-          <button type="submit">Contact Fit10X</button>
-        </form>
+        <div className="phase-grid">
+          <article><span>Now</span><h3>Consumer, recipes, grocery intelligence, restaurant nutrition.</h3></article>
+          <article><span>Next</span><h3>Corporate wellness, dietitian tools, retail partnerships.</h3></article>
+          <article><span>Future</span><h3>Insurance, enterprise integrations, developer APIs.</h3></article>
+        </div>
+      </section>
+
+      <section id="contact" className="contact-v2">
+        <p className="kicker">Fit10X</p>
+        <h2>Build the future of nutrition with us.</h2>
+        <div className="contact-actions">
+          <a href="mailto:info@fit10x.ca"><Mail size={18} /> info@fit10x.ca</a>
+          <a href="tel:+16479169693"><Phone size={18} /> 647-916-9693</a>
+        </div>
       </section>
     </main>
   );
