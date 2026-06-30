@@ -1,102 +1,101 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Float, OrbitControls } from '@react-three/drei';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowDown, Mail, Phone } from 'lucide-react';
 import { useRef } from 'react';
 import type { Group } from 'three';
 
 const chapters = [
-  ['01', 'Scan breakfast', 'A real meal becomes calories, protein, fiber, and health guidance in seconds.'],
-  ['02', 'Order lunch', 'Restaurant meals arrive with nutrition already attached. No manual logging.'],
-  ['03', 'Choose dinner', 'A recipe becomes a grocery list, pantry update, cooking guide, and nutrition log.'],
-  ['04', 'Shop smarter', 'Packaged food scans reveal ingredients, warnings, and cleaner alternatives.'],
-  ['05', 'Share progress', 'Dietitians, employers, and partners can support healthier decisions.'],
+  {
+    number: '01',
+    title: 'Scan breakfast',
+    text: 'A real meal becomes calories, protein, fiber, and guidance in seconds.',
+    label: 'AI Meal Scan',
+    result: 'Protein +42g',
+    note: 'Breakfast logged',
+  },
+  {
+    number: '02',
+    title: 'Order lunch',
+    text: 'Restaurant meals arrive with nutrition already attached. No manual entry.',
+    label: 'Restaurant Order',
+    result: 'Lunch logged',
+    note: 'Menu nutrition synced',
+  },
+  {
+    number: '03',
+    title: 'Choose dinner',
+    text: 'A recipe becomes a grocery list, pantry update, cooking guide, and nutrition log.',
+    label: 'Recipe Builder',
+    result: 'Cart ready',
+    note: '6 ingredients added',
+  },
+  {
+    number: '04',
+    title: 'Shop smarter',
+    text: 'A barcode scan reveals ingredients, warnings, and cleaner alternatives.',
+    label: 'Barcode Scan',
+    result: 'Better option found',
+    note: 'Lower sugar swap',
+  },
+  {
+    number: '05',
+    title: 'Share progress',
+    text: 'Dietitians, employers, and partners can support healthier choices.',
+    label: 'Care Progress',
+    result: 'Goal improving',
+    note: 'Shared with care team',
+  },
 ];
 
-const modules = [
-  'Recipes',
-  'Groceries',
-  'Pantry',
-  'Restaurants',
-  'Barcode',
-  'Healthcare',
-  'Corporate Wellness',
-  'AI Coach',
-];
+const modules = ['Recipe', 'Grocery', 'Pantry', 'Cooking', 'Restaurant', 'Barcode', 'Dietitian', 'Employer'];
 
-function OrbitingFoodWorld() {
+function HeroWorld() {
   const group = useRef<Group>(null);
-  const inner = useRef<Group>(null);
 
-  useFrame(({ clock }, delta) => {
-    if (group.current) group.current.rotation.y += delta * 0.18;
-    if (inner.current) {
-      inner.current.rotation.x = Math.sin(clock.elapsedTime * 0.42) * 0.24;
-      inner.current.rotation.z += delta * 0.12;
-    }
+  useFrame((_, delta) => {
+    if (group.current) group.current.rotation.y += delta * 0.12;
   });
 
   return (
     <group ref={group}>
-      <group ref={inner}>
-        <mesh>
-          <sphereGeometry args={[1.15, 64, 64]} />
-          <meshStandardMaterial color="#16c784" roughness={0.22} metalness={0.25} />
-        </mesh>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.62, 0.025, 24, 160]} />
-          <meshStandardMaterial color="#dfffea" roughness={0.16} metalness={0.1} />
-        </mesh>
-        <mesh rotation={[0.55, 0.2, 0.4]}>
-          <torusGeometry args={[1.98, 0.018, 24, 180]} />
-          <meshStandardMaterial color="#8eea65" roughness={0.22} />
-        </mesh>
-      </group>
-
-      {modules.map((label, index) => {
-        const angle = (index / modules.length) * Math.PI * 2;
-        const radius = index % 2 ? 2.65 : 3.25;
-        const x = Math.cos(angle) * radius;
-        const z = Math.sin(angle) * radius;
-        const y = Math.sin(angle * 1.7) * 0.85;
+      <mesh>
+        <sphereGeometry args={[1.12, 36, 36]} />
+        <meshStandardMaterial color="#16c784" roughness={0.32} metalness={0.08} />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1.62, 0.026, 12, 96]} />
+        <meshStandardMaterial color="#b9f47a" roughness={0.3} />
+      </mesh>
+      {modules.slice(0, 6).map((item, index) => {
+        const angle = (index / 6) * Math.PI * 2;
+        const x = Math.cos(angle) * 2.8;
+        const z = Math.sin(angle) * 1.25;
+        const y = Math.sin(angle * 1.4) * 0.75;
         return (
-          <Float key={label} speed={1 + index * 0.08} floatIntensity={0.6} rotationIntensity={0.4}>
-            <group position={[x, y, z]}>
-              <mesh>
-                <boxGeometry args={[0.7, 0.7, 0.18]} />
-                <meshStandardMaterial color={index % 2 ? '#07111f' : '#ffffff'} roughness={0.26} metalness={0.08} />
-              </mesh>
-              <mesh position={[0, 0, 0.13]}>
-                <sphereGeometry args={[0.12, 24, 24]} />
-                <meshStandardMaterial color={index % 2 ? '#8eea65' : '#16c784'} />
-              </mesh>
-            </group>
-          </Float>
+          <group key={item} position={[x, y, z]}>
+            <mesh>
+              <boxGeometry args={[0.48, 0.48, 0.14]} />
+              <meshStandardMaterial color={index % 2 ? '#07111f' : '#ffffff'} roughness={0.42} />
+            </mesh>
+          </group>
         );
       })}
     </group>
   );
 }
 
-function CinematicScene() {
+function HeroCanvas() {
   return (
-    <Canvas camera={{ position: [0, 0.4, 7], fov: 42 }}>
-      <color attach="background" args={["#f7fbf8"]} />
-      <ambientLight intensity={1.1} />
-      <directionalLight position={[4, 5, 4]} intensity={2.6} />
-      <pointLight position={[-3, -2, 5]} color="#8eea65" intensity={4} />
-      <OrbitingFoodWorld />
-      <Environment preset="city" />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.25} />
+    <Canvas dpr={[1, 1.35]} frameloop="always" camera={{ position: [0, 0.2, 6.2], fov: 40 }}>
+      <ambientLight intensity={1.2} />
+      <directionalLight position={[4, 5, 4]} intensity={2.1} />
+      <pointLight position={[-3, -2, 5]} color="#8eea65" intensity={2.3} />
+      <HeroWorld />
     </Canvas>
   );
 }
 
 function App() {
-  const { scrollYProgress } = useScroll();
-  const heroY = useTransform(scrollYProgress, [0, 0.28], ['0%', '-18%']);
-  const sceneScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.18]);
-
   return (
     <main>
       <nav className="topbar">
@@ -110,15 +109,11 @@ function App() {
       </nav>
 
       <section id="top" className="cinema-hero">
-        <motion.div className="scene-wrap" style={{ scale: sceneScale }}>
-          <CinematicScene />
-        </motion.div>
-        <motion.div className="hero-content" style={{ y: heroY }}>
+        <div className="scene-wrap"><HeroCanvas /></div>
+        <motion.div className="hero-content" initial={{ opacity: 0, y: 34 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <p className="kicker">3D nutrition intelligence</p>
-          <h1>One platform for every meal you plan, buy, cook, and eat.</h1>
-          <p>
-            Fit10X connects recipes, groceries, restaurants, barcode scans, and health goals into one AI-powered nutrition story.
-          </p>
+          <h1>Every meal connected.</h1>
+          <p>Fit10X connects recipes, groceries, restaurants, scans, and health goals into one nutrition platform.</p>
           <a href="#journey" className="hero-cta">Enter the story <ArrowDown size={18} /></a>
         </motion.div>
         <div className="orbit-label label-a">Recipes</div>
@@ -129,29 +124,33 @@ function App() {
 
       <section className="manifesto">
         <p>Nutrition should not live in five separate apps.</p>
-        <h2>Fit10X turns the full food journey into one connected experience.</h2>
+        <h2>One connected journey from food planning to health progress.</h2>
       </section>
 
       <section id="journey" className="scroll-story">
         <div className="sticky-visual">
           <div className="phone-shell">
             <div className="phone-screen">
-              <div className="scan-ring" />
-              <span>AI Meal Scan</span>
-              <strong>Protein +42g</strong>
-              <small>Logged automatically</small>
+              <div className="phone-orb" />
+              <span>Live Fit10X Demo</span>
+              <strong>Watch the flow</strong>
+              <small>The phone updates as the story scrolls.</small>
             </div>
           </div>
-          <div className="floating-card recipe-card">Recipe → Grocery List</div>
-          <div className="floating-card cart-card">Cart → Pantry</div>
-          <div className="floating-card health-card">Progress → Care</div>
         </div>
         <div className="story-copy">
-          {chapters.map(([number, title, text]) => (
-            <motion.article key={title} className="chapter" initial={{ opacity: 0, y: 80 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.45 }}>
-              <span>{number}</span>
-              <h2>{title}</h2>
-              <p>{text}</p>
+          {chapters.map((chapter) => (
+            <motion.article key={chapter.title} className="chapter" initial={{ opacity: 0.2, y: 80 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.55 }}>
+              <div className="chapter-copy">
+                <span>{chapter.number}</span>
+                <h2>{chapter.title}</h2>
+                <p>{chapter.text}</p>
+              </div>
+              <div className="phone-state">
+                <small>{chapter.label}</small>
+                <strong>{chapter.result}</strong>
+                <em>{chapter.note}</em>
+              </div>
             </motion.article>
           ))}
         </div>
@@ -159,21 +158,19 @@ function App() {
 
       <section id="ecosystem" className="ecosystem">
         <p className="kicker">The ecosystem</p>
-        <h2>Recipe → grocery → pantry → cooking → restaurant → health.</h2>
+        <h2>Recipe to grocery to pantry to cooking to restaurant to health.</h2>
         <div className="ecosystem-track">
-          {['Recipe', 'Grocery', 'Pantry', 'Cooking', 'Restaurant', 'Barcode', 'Dietitian', 'Employer'].map((item) => (
-            <div className="eco-node" key={item}>{item}</div>
-          ))}
+          {modules.map((item) => <div className="eco-node" key={item}>{item}</div>)}
         </div>
       </section>
 
       <section id="roadmap" className="roadmap-v2">
         <div>
-          <p className="kicker">Credible phasing</p>
-          <h2>Beautiful vision. Clear build order.</h2>
+          <p className="kicker">Build order</p>
+          <h2>Vision with clear phases.</h2>
         </div>
         <div className="phase-grid">
-          <article><span>Now</span><h3>Consumer, recipes, grocery intelligence, restaurant nutrition.</h3></article>
+          <article><span>Now</span><h3>Consumer nutrition, recipes, grocery intelligence, restaurant menus.</h3></article>
           <article><span>Next</span><h3>Corporate wellness, dietitian tools, retail partnerships.</h3></article>
           <article><span>Future</span><h3>Insurance, enterprise integrations, developer APIs.</h3></article>
         </div>
