@@ -1,15 +1,12 @@
-import { Canvas, useFrame } from '@react-three/fiber';
 import { motion } from 'framer-motion';
 import { ArrowDown, Mail, Phone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import type { Group } from 'three';
 
 const chapters = [
-  { number: '01', title: 'Scan breakfast', text: 'A real meal becomes calories, protein, fiber, and guidance in seconds.', label: 'AI Meal Scan', result: 'Protein +42g', note: 'Breakfast logged', chips: ['Calories', 'Protein', 'Fiber'] },
-  { number: '02', title: 'Order lunch', text: 'Restaurant meals arrive with nutrition already attached. No manual entry.', label: 'Restaurant Order', result: 'Lunch logged', note: 'Menu nutrition synced', chips: ['Restaurant', 'POS', 'Nutrition'] },
-  { number: '03', title: 'Choose dinner', text: 'A recipe becomes a grocery list, pantry update, cooking guide, and nutrition log.', label: 'Recipe Builder', result: 'Cart ready', note: '6 ingredients added', chips: ['Recipe', 'Cart', 'Pantry'] },
-  { number: '04', title: 'Shop smarter', text: 'A barcode scan reveals ingredients, warnings, and cleaner alternatives.', label: 'Barcode Scan', result: 'Better option found', note: 'Lower sugar swap', chips: ['Barcode', 'Compare', 'Swap'] },
-  { number: '05', title: 'Share progress', text: 'Dietitians, employers, and partners can support healthier choices.', label: 'Care Progress', result: 'Goal improving', note: 'Shared with care team', chips: ['Dietitian', 'Employer', 'Progress'] },
+  { number: '02', title: 'AI understands what you eat.', text: 'One scan turns a real meal into calories, protein, fiber, and micronutrients.', label: 'AI Meal Scan', result: 'Nutrition found', note: 'Meal → Nutrition', chips: ['Calories', 'Protein', 'Fiber'] },
+  { number: '03', title: 'Turn meals into smart recipes.', text: 'Fit10X creates recipes, ingredients, macros, serving size, and a grocery list.', label: 'Recipe Builder', result: 'Recipe ready', note: 'Meal → Plan', chips: ['Recipe', 'Macros', 'Shopping'] },
+  { number: '04', title: 'Shop smarter. Choose better.', text: 'Ingredients become a cart and AI suggests better, cheaper, healthier options.', label: 'Grocery Intelligence', result: 'Better choices', note: 'Plan → Shop', chips: ['Cart', 'Swaps', 'Budget'] },
+  { number: '05', title: 'Made for your health.', text: 'Weight loss, diabetes, heart health, pregnancy, allergies, kidney care, and more.', label: 'Health Mode', result: 'Personalized plan', note: 'Everything → You', chips: ['Diabetes', 'Heart', 'Allergies'] },
 ];
 
 const flow = [
@@ -18,47 +15,29 @@ const flow = [
   ['Pantry', 'Track what exists at home, what is missing, and what expires soon.'],
   ['Cooking', 'Log nutrition automatically when meals are prepared.'],
   ['Restaurant', 'Restaurant orders update nutrition without manual entry.'],
-  ['Health', 'Progress can support dietitians, employers, and care programs.'],
+  ['Health', 'Strict goals and disease-specific nutrition guidance stay connected.'],
 ];
 
-function HeroWorld() {
-  const group = useRef<Group>(null);
-  useFrame((_, delta) => {
-    if (group.current) group.current.rotation.y += delta * 0.1;
-  });
+function ProblemVisual() {
   return (
-    <group ref={group}>
-      <mesh>
-        <sphereGeometry args={[1.05, 32, 32]} />
-        <meshStandardMaterial color="#16c784" roughness={0.34} metalness={0.06} />
-      </mesh>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[1.52, 0.026, 12, 80]} />
-        <meshStandardMaterial color="#b9f47a" roughness={0.35} />
-      </mesh>
-      {['Recipe', 'Cart', 'Menu', 'Scan', 'Care', 'AI'].map((item, index) => {
-        const angle = (index / 6) * Math.PI * 2;
-        return (
-          <group key={item} position={[Math.cos(angle) * 2.45, Math.sin(angle * 1.25) * 0.68, Math.sin(angle) * 1.15]}>
-            <mesh>
-              <boxGeometry args={[0.44, 0.44, 0.13]} />
-              <meshStandardMaterial color={index % 2 ? '#07111f' : '#ffffff'} roughness={0.45} />
-            </mesh>
-          </group>
-        );
-      })}
-    </group>
-  );
-}
-
-function HeroCanvas() {
-  return (
-    <Canvas dpr={[1, 1.25]} camera={{ position: [0, 0.15, 5.8], fov: 39 }}>
-      <ambientLight intensity={1.15} />
-      <directionalLight position={[4, 5, 4]} intensity={2} />
-      <pointLight position={[-3, -2, 5]} color="#8eea65" intensity={2} />
-      <HeroWorld />
-    </Canvas>
+    <div className="problem-visual" aria-label="Meal data gets lost before Fit10X connects it">
+      <div className="person-line" />
+      <div className="meal-stage">
+        <div className="steam s1" /><div className="steam s2" /><div className="steam s3" />
+        <div className="bowl">
+          <div className="food-dot tomato" /><div className="food-dot green1" /><div className="food-dot green2" /><div className="food-dot rice" /><div className="food-dot protein" />
+        </div>
+        <div className="scan-orbit" />
+        <div className="particle p1" /><div className="particle p2" /><div className="particle p3" /><div className="particle p4" /><div className="particle p5" />
+      </div>
+      <div className="hero-phone">
+        <div className="phone-notch" />
+        <span>Nutrition data</span>
+        <strong>Not saved</strong>
+        <small>Calories • Protein • Fiber • Health context</small>
+      </div>
+      <div className="lost-card">AI scanning</div>
+    </div>
   );
 }
 
@@ -67,13 +46,10 @@ function App() {
   const chapterRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) setActive(Number(visible.target.getAttribute('data-index') || 0));
-      },
-      { threshold: 0.55, rootMargin: '-10% 0px -20% 0px' },
-    );
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.find((entry) => entry.isIntersecting);
+      if (visible) setActive(Number(visible.target.getAttribute('data-index') || 0));
+    }, { threshold: 0.55, rootMargin: '-10% 0px -20% 0px' });
     chapterRefs.current.forEach((node) => node && observer.observe(node));
     return () => observer.disconnect();
   }, []);
@@ -82,27 +58,23 @@ function App() {
 
   return (
     <main>
-      <nav className="topbar">
+      <nav className="topbar dark-nav">
         <a className="logo" href="#top"><span>F</span>Fit10X</a>
         <div className="navlinks"><a href="#journey">Journey</a><a href="#ecosystem">Ecosystem</a><a href="#partners">Partners</a><a href="#contact">Contact</a></div>
       </nav>
 
-      <section id="top" className="cinema-hero">
-        <div className="hero-grid">
-          <motion.div className="hero-content" initial={{ opacity: 0, y: 34 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <p className="kicker">3D nutrition intelligence</p>
-            <h1>Every meal connected.</h1>
-            <p>Recipes, groceries, restaurants, scans, and health goals working together in one Fit10X ecosystem.</p>
-            <a href="#journey" className="hero-cta">Enter the story <ArrowDown size={18} /></a>
-          </motion.div>
-          <div className="visual-panel">
-            <div className="scene-wrap"><HeroCanvas /></div>
-            <div className="orbit-label label-a">Recipes</div><div className="orbit-label label-b">Grocery</div><div className="orbit-label label-c">Restaurants</div><div className="orbit-label label-d">Health</div>
-          </div>
-        </div>
+      <section id="top" className="problem-hero">
+        <div className="hero-noise" />
+        <motion.div className="problem-copy" initial={{ opacity: 0, y: 34 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          <p className="kicker">Chapter 01 · The problem</p>
+          <h1>Every meal has data.<br /><span>Today, it gets lost.</span></h1>
+          <p>Calories, protein, ingredients, allergies, health restrictions, and progress disappear across recipes, groceries, restaurants, and apps.</p>
+          <a href="#journey" className="hero-cta">Explore the Story <ArrowDown size={18} /></a>
+        </motion.div>
+        <ProblemVisual />
       </section>
 
-      <section className="manifesto"><p>Nutrition should not live in five separate apps.</p><h2>One connected journey from food planning to health progress.</h2></section>
+      <section className="manifesto"><p>Fit10X starts with one person.</p><h2>Then every feature follows their food journey.</h2></section>
 
       <section id="journey" className="scroll-story">
         <div className="sticky-visual">
@@ -127,7 +99,7 @@ function App() {
       </section>
 
       <section id="ecosystem" className="ecosystem">
-        <div className="ecosystem-intro"><p className="kicker">The ecosystem</p><h2>From recipe idea to measurable health progress.</h2></div>
+        <div className="ecosystem-intro"><p className="kicker">The ecosystem</p><h2>From one person to a connected nutrition platform.</h2></div>
         <div className="flow-map">
           {flow.map(([title, text], index) => <article className="flow-card" key={title}><span>{String(index + 1).padStart(2, '0')}</span><h3>{title}</h3><p>{text}</p></article>)}
         </div>
@@ -135,8 +107,8 @@ function App() {
 
       <section id="partners" className="partner-phase">
         <p className="kicker">Next phases</p>
-        <h2>Built for consumers first. Valuable for partners next.</h2>
-        <div className="phase-grid"><article><span>Restaurants</span><h3>Menus become nutrition-aware ordering experiences.</h3></article><article><span>Grocers</span><h3>Recipes turn into smart carts and healthier substitutions.</h3></article><article><span>Healthcare</span><h3>Dietitians see real progress instead of incomplete food diaries.</h3></article></div>
+        <h2>Built for people first. Valuable for partners next.</h2>
+        <div className="phase-grid"><article><span>Restaurants</span><h3>Menus become nutrition-aware ordering experiences.</h3></article><article><span>Grocers</span><h3>Recipes turn into smart carts and healthier substitutions.</h3></article><article><span>Healthcare</span><h3>Strict nutrition plans become easier to follow every day.</h3></article></div>
       </section>
 
       <section id="contact" className="contact-v2"><p className="kicker">Fit10X</p><h2>Build the future of nutrition with us.</h2><div className="contact-actions"><a href="mailto:info@fit10x.ca"><Mail size={18} /> info@fit10x.ca</a><a href="tel:+16479169693"><Phone size={18} /> 647-916-9693</a></div></section>
