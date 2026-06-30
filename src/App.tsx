@@ -15,7 +15,7 @@ const flow = [
   ['Pantry', 'Track what exists at home, what is missing, and what expires soon.'],
   ['Cooking', 'Log nutrition automatically when meals are prepared.'],
   ['Restaurant', 'Restaurant orders update nutrition without manual entry.'],
-  ['Health', 'Strict goals and disease-specific nutrition guidance stay connected.'],
+  ['Health', 'Strict goals and disease-specific nutrition guidance stays connected.'],
 ];
 
 function ProblemVisual() {
@@ -28,15 +28,21 @@ function ProblemVisual() {
           <div className="food-dot tomato" /><div className="food-dot green1" /><div className="food-dot green2" /><div className="food-dot rice" /><div className="food-dot protein" />
         </div>
         <div className="scan-orbit" />
+        <div className="scan-beam" />
         <div className="particle p1" /><div className="particle p2" /><div className="particle p3" /><div className="particle p4" /><div className="particle p5" />
       </div>
+      <div className="lost-card">AI scanning</div>
       <div className="hero-phone">
         <div className="phone-notch" />
-        <span>Nutrition data</span>
-        <strong>Not saved</strong>
-        <small>Calories • Protein • Fiber • Health context</small>
+        <span>Lunch detected</span>
+        <strong>This nutrition will disappear.</strong>
+        <div className="data-list">
+          <b>Calories</b><i>Not saved</i>
+          <b>Protein</b><i>Not saved</i>
+          <b>Ingredients</b><i>Not saved</i>
+          <b>Health context</b><i>Not saved</i>
+        </div>
       </div>
-      <div className="lost-card">AI scanning</div>
     </div>
   );
 }
