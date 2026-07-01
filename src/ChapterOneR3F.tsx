@@ -2,108 +2,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, OrbitControls, PerspectiveCamera, RoundedBox } from '@react-three/drei';
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
-import type { Group, Mesh } from 'three';
-
-function Leaf({ x, z, r = 0 }: { x: number; z: number; r?: number }) {
-  return (
-    <mesh position={[x, 0.22, z]} rotation={[-0.95, 0, r]} scale={[0.22, 0.035, 0.09]}>
-      <sphereGeometry args={[1, 24, 12]} />
-      <meshStandardMaterial color="#54d66f" roughness={0.62} />
-    </mesh>
-  );
-}
-
-function Tomato({ x, z }: { x: number; z: number }) {
-  return (
-    <mesh position={[x, 0.29, z]} scale={0.13}>
-      <sphereGeometry args={[1, 28, 18]} />
-      <meshStandardMaterial color="#e94332" roughness={0.45} />
-    </mesh>
-  );
-}
-
-function Chicken({ x, z, r = 0 }: { x: number; z: number; r?: number }) {
-  return (
-    <RoundedBox position={[x, 0.26, z]} rotation={[0.12, r, -0.08]} args={[0.34, 0.14, 0.22]} radius={0.035} smoothness={4}>
-      <meshStandardMaterial color="#d58a4d" roughness={0.72} />
-    </RoundedBox>
-  );
-}
-
-function Avocado({ x, z, r = 0 }: { x: number; z: number; r?: number }) {
-  return (
-    <mesh position={[x, 0.27, z]} rotation={[-0.75, 0, r]} scale={[0.18, 0.04, 0.32]}>
-      <sphereGeometry args={[1, 32, 14]} />
-      <meshStandardMaterial color="#7bd84d" roughness={0.58} />
-    </mesh>
-  );
-}
-
-function RiceBed() {
-  return (
-    <group>
-      <mesh position={[-0.46, 0.21, 0.08]} scale={[0.75, 0.11, 0.43]}>
-        <sphereGeometry args={[1, 42, 18]} />
-        <meshStandardMaterial color="#f2e5c8" roughness={0.9} />
-      </mesh>
-      {Array.from({ length: 26 }).map((_, i) => {
-        const x = -0.92 + (i % 7) * 0.14;
-        const z = -0.1 + Math.floor(i / 7) * 0.12;
-        return (
-          <mesh key={i} position={[x, 0.32 + (i % 3) * 0.006, z]} rotation={[0.4, i * 0.4, 0]} scale={[0.035, 0.018, 0.018]}>
-            <sphereGeometry args={[1, 12, 8]} />
-            <meshStandardMaterial color="#fff2d3" roughness={0.95} />
-          </mesh>
-        );
-      })}
-    </group>
-  );
-}
-
-function MealBowl() {
-  const bowl = useRef<Group>(null);
-  const scan = useRef<Mesh>(null);
-
-  useFrame((state) => {
-    if (bowl.current) {
-      bowl.current.rotation.y = -0.42 + Math.sin(state.clock.elapsedTime * 0.34) * 0.08;
-      bowl.current.position.y = Math.sin(state.clock.elapsedTime * 0.65) * 0.04;
-    }
-    if (scan.current) scan.current.rotation.z = state.clock.elapsedTime * 0.48;
-  });
-
-  return (
-    <group ref={bowl} position={[-1.35, -0.42, 0]} rotation={[0.2, -0.42, -0.02]}>
-      <mesh position={[0, -0.18, 0]} scale={[1.75, 0.28, 1.16]}>
-        <sphereGeometry args={[1, 80, 28]} />
-        <meshStandardMaterial color="#ede7d5" roughness={0.5} metalness={0.03} />
-      </mesh>
-      <mesh position={[0, 0.03, 0]} scale={[1.44, 0.08, 0.9]}>
-        <sphereGeometry args={[1, 80, 18]} />
-        <meshStandardMaterial color="#14201b" roughness={0.88} />
-      </mesh>
-      <RiceBed />
-      <Chicken x={0.42} z={0.05} r={0.18} />
-      <Chicken x={0.68} z={-0.16} r={-0.24} />
-      <Chicken x={0.27} z={-0.22} r={0.75} />
-      <Tomato x={-0.24} z={-0.34} />
-      <Tomato x={-0.46} z={-0.28} />
-      <Tomato x={-0.04} z={-0.38} />
-      <Avocado x={-0.35} z={0.45} r={-0.35} />
-      <Avocado x={-0.14} z={0.47} r={-0.12} />
-      <Avocado x={0.08} z={0.44} r={0.15} />
-      <Leaf x={0.55} z={0.36} r={0.4} />
-      <Leaf x={0.73} z={0.24} r={0.1} />
-      <Leaf x={0.88} z={0.39} r={-0.45} />
-      <Leaf x={0.58} z={-0.38} r={-0.3} />
-      <Leaf x={0.78} z={-0.36} r={0.18} />
-      <mesh ref={scan} position={[0, 0.25, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[2.0, 1.15, 1]}>
-        <torusGeometry args={[0.78, 0.012, 16, 160]} />
-        <meshBasicMaterial color="#15c77a" transparent opacity={0.88} />
-      </mesh>
-    </group>
-  );
-}
+import type { Group } from 'three';
 
 function DataParticles() {
   const group = useRef<Group>(null);
@@ -111,9 +10,9 @@ function DataParticles() {
     if (!group.current) return;
     group.current.children.forEach((child, index) => {
       const t = (state.clock.elapsedTime * 0.32 + index * 0.075) % 1;
-      child.position.x = -0.82 + t * 2.15;
-      child.position.y = -0.02 + Math.sin(t * Math.PI) * 0.5 + (index % 3) * 0.035;
-      child.position.z = 0.5 - t * 0.16;
+      child.position.x = -1.45 + t * 2.9;
+      child.position.y = -0.1 + Math.sin(t * Math.PI) * 0.45 + (index % 3) * 0.04;
+      child.position.z = 0.45 - t * 0.16;
     });
   });
   return (
@@ -134,11 +33,11 @@ function PhoneModel() {
     if (phone.current) phone.current.position.y = Math.sin(state.clock.elapsedTime * 0.62) * 0.045;
   });
   return (
-    <group ref={phone} position={[1.48, -0.12, 0.02]} rotation={[0.02, -0.28, 0.02]}>
-      <RoundedBox args={[1.06, 2.12, 0.14]} radius={0.18} smoothness={10}>
+    <group ref={phone} position={[1.45, -0.13, 0.02]} rotation={[0.02, -0.25, 0.02]}>
+      <RoundedBox args={[1.03, 2.08, 0.14]} radius={0.18} smoothness={10}>
         <meshStandardMaterial color="#02050a" roughness={0.24} metalness={0.68} />
       </RoundedBox>
-      <RoundedBox position={[0, 0, 0.085]} args={[0.92, 1.92, 0.035]} radius={0.14} smoothness={10}>
+      <RoundedBox position={[0, 0, 0.085]} args={[0.9, 1.9, 0.035]} radius={0.14} smoothness={10}>
         <meshBasicMaterial color="#06101b" />
       </RoundedBox>
       <RoundedBox position={[0, 0.88, 0.115]} args={[0.33, 0.07, 0.035]} radius={0.04} smoothness={6}>
@@ -151,18 +50,78 @@ function PhoneModel() {
 function Scene() {
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0.28, 4.65]} fov={38} />
-      <ambientLight intensity={1.2} />
-      <directionalLight position={[2.5, 4.5, 3.8]} intensity={2.7} />
+      <PerspectiveCamera makeDefault position={[0, 0.25, 4.9]} fov={38} />
+      <ambientLight intensity={1.25} />
+      <directionalLight position={[2.5, 4.5, 3.8]} intensity={2.5} />
       <pointLight position={[-1.5, 0.2, 2.2]} intensity={2.7} color="#15c77a" />
-      <pointLight position={[2, 1, 1.4]} intensity={0.9} color="#ffffff" />
-      <Float speed={0.85} rotationIntensity={0.04} floatIntensity={0.14}>
-        <MealBowl />
+      <Float speed={0.85} rotationIntensity={0.03} floatIntensity={0.12}>
         <DataParticles />
         <PhoneModel />
       </Float>
       <OrbitControls enabled={false} />
     </>
+  );
+}
+
+function VectorMeal() {
+  return (
+    <svg className="vector-meal" viewBox="0 0 760 500" role="img" aria-label="premium illustrated healthy meal bowl">
+      <defs>
+        <radialGradient id="plateGlow" cx="50%" cy="42%" r="58%">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="0.62" stopColor="#e6eee7" />
+          <stop offset="1" stopColor="#a5b4aa" />
+        </radialGradient>
+        <radialGradient id="bowlInside" cx="50%" cy="42%" r="62%">
+          <stop offset="0" stopColor="#1e352a" />
+          <stop offset="1" stopColor="#07110d" />
+        </radialGradient>
+        <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="24" stdDeviation="22" floodColor="#000000" floodOpacity="0.55" />
+        </filter>
+        <filter id="foodShadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="8" stdDeviation="5" floodColor="#000000" floodOpacity="0.26" />
+        </filter>
+      </defs>
+      <ellipse cx="342" cy="288" rx="292" ry="112" fill="url(#plateGlow)" filter="url(#softShadow)" />
+      <ellipse cx="342" cy="252" rx="240" ry="88" fill="url(#bowlInside)" opacity="0.97" />
+      <path d="M116 252c36 98 410 98 452 0" fill="none" stroke="#f4f0df" strokeWidth="56" strokeLinecap="round" opacity="0.92" />
+
+      <g filter="url(#foodShadow)">
+        <path d="M174 214c44-62 132-64 174-4-28 35-124 47-174 4z" fill="#f4dfb7" />
+        <g fill="#fff1d1">
+          <ellipse cx="220" cy="214" rx="13" ry="8" /><ellipse cx="246" cy="199" rx="12" ry="8" /><ellipse cx="276" cy="213" rx="12" ry="8" /><ellipse cx="303" cy="198" rx="11" ry="8" /><ellipse cx="330" cy="213" rx="12" ry="8" />
+        </g>
+        <path d="M365 195c63-34 127-20 151 34-52 23-124 24-151-34z" fill="#54d177" />
+        <path d="M394 201c38-14 81-4 99 22-41 13-84 10-99-22z" fill="#8ee35d" opacity="0.9" />
+        <path d="M264 270c24-74 76-103 137-75-16 76-73 104-137 75z" fill="#76d847" />
+        <path d="M296 261c19-48 55-67 91-52-17 48-48 67-91 52z" fill="#b4ee79" opacity="0.85" />
+        <g>
+          <ellipse cx="207" cy="175" rx="28" ry="28" fill="#ef4637" />
+          <ellipse cx="265" cy="160" rx="30" ry="30" fill="#ff5a43" />
+          <ellipse cx="319" cy="178" rx="28" ry="28" fill="#e93e32" />
+          <path d="M190 148c38-23 101-16 151 15" stroke="#6bd873" strokeWidth="8" fill="none" strokeLinecap="round" />
+          <path d="M248 129c10 28 12 60 4 98" stroke="#41b85b" strokeWidth="6" fill="none" strokeLinecap="round" />
+        </g>
+        <g>
+          <rect x="424" y="245" width="62" height="44" rx="13" fill="#d88b4a" />
+          <rect x="498" y="227" width="74" height="48" rx="15" fill="#c5793d" />
+          <rect x="444" y="203" width="70" height="48" rx="15" fill="#e0a45b" />
+          <path d="M438 239c54 20 92 18 130-10" stroke="#9d5b30" strokeWidth="4" opacity="0.35" />
+        </g>
+        <g>
+          <path d="M548 170c42 6 72 35 83 78-44 15-83 0-107-41z" fill="#69d46d" />
+          <path d="M558 186c32 7 53 27 63 53-31 8-61-1-80-29z" fill="#b7f084" opacity="0.75" />
+          <path d="M582 160c37-3 70 17 86 50-35 20-77 6-94-22z" fill="#2bbf6b" />
+        </g>
+        <g fill="#914bd8" opacity="0.95">
+          <path d="M518 303c26-45 68-52 111-30-29 41-74 54-111 30z" />
+          <path d="M554 312c25-24 55-28 91-12-29 22-59 29-91 12z" fill="#b869ef" />
+        </g>
+      </g>
+      <ellipse className="meal-scan-ring" cx="344" cy="252" rx="282" ry="94" fill="none" stroke="#20d884" strokeWidth="6" opacity="0.9" />
+      <line className="meal-scan-line" x1="350" y1="112" x2="350" y2="375" stroke="#20d884" strokeWidth="6" strokeLinecap="round" opacity="0.78" />
+    </svg>
   );
 }
 
@@ -188,6 +147,7 @@ function PhoneOverlay() {
 export default function ChapterOneR3F() {
   return (
     <div className="r3f-hero-stage">
+      <VectorMeal />
       <div className="r3f-canvas-wrap">
         <Canvas dpr={[1, 1.65]} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}>
           <Scene />
