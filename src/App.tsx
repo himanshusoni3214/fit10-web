@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowDown, Mail, Phone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import ChapterOneR3F from './ChapterOneR3F';
 
 const chapters = [
   { number: '02', title: 'AI understands what you eat.', text: 'One scan turns a real meal into calories, protein, fiber, and micronutrients.', label: 'AI Meal Scan', result: 'Nutrition found', note: 'Meal → Nutrition', chips: ['Calories', 'Protein', 'Fiber'] },
@@ -17,35 +18,6 @@ const flow = [
   ['Restaurant', 'Restaurant orders update nutrition without manual entry.'],
   ['Health', 'Strict goals and disease-specific nutrition guidance stays connected.'],
 ];
-
-function ProblemVisual() {
-  return (
-    <div className="problem-visual" aria-label="Meal data gets lost before Fit10X connects it">
-      <div className="person-line" />
-      <div className="meal-stage">
-        <div className="steam s1" /><div className="steam s2" /><div className="steam s3" />
-        <div className="bowl">
-          <div className="food-dot tomato" /><div className="food-dot green1" /><div className="food-dot green2" /><div className="food-dot rice" /><div className="food-dot protein" />
-        </div>
-        <div className="scan-orbit" />
-        <div className="scan-beam" />
-        <div className="particle p1" /><div className="particle p2" /><div className="particle p3" /><div className="particle p4" /><div className="particle p5" />
-      </div>
-      <div className="lost-card">AI scanning</div>
-      <div className="hero-phone">
-        <div className="phone-notch" />
-        <span>Lunch detected</span>
-        <strong>This nutrition will disappear.</strong>
-        <div className="data-list">
-          <b>Calories</b><i>Not saved</i>
-          <b>Protein</b><i>Not saved</i>
-          <b>Ingredients</b><i>Not saved</i>
-          <b>Health context</b><i>Not saved</i>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function App() {
   const [active, setActive] = useState(0);
@@ -69,7 +41,7 @@ function App() {
         <div className="navlinks"><a href="#journey">Journey</a><a href="#ecosystem">Ecosystem</a><a href="#partners">Partners</a><a href="#contact">Contact</a></div>
       </nav>
 
-      <section id="top" className="problem-hero">
+      <section id="top" className="problem-hero r3f-chapter-one">
         <div className="hero-noise" />
         <motion.div className="problem-copy" initial={{ opacity: 0, y: 34 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <p className="kicker">Chapter 01 · The problem</p>
@@ -77,7 +49,7 @@ function App() {
           <p>Calories, protein, ingredients, allergies, health restrictions, and progress disappear across recipes, groceries, restaurants, and apps.</p>
           <a href="#journey" className="hero-cta">Explore the Story <ArrowDown size={18} /></a>
         </motion.div>
-        <ProblemVisual />
+        <ChapterOneR3F />
       </section>
 
       <section className="manifesto"><p>Fit10X starts with one person.</p><h2>Then every feature follows their food journey.</h2></section>
