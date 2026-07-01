@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowDown, Mail, Phone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ChapterOneR3F from './ChapterOneR3F';
+import './chapter-one-r3f.css';
 
 const chapters = [
   { number: '02', title: 'AI understands what you eat.', text: 'One scan turns a real meal into calories, protein, fiber, and micronutrients.', label: 'AI Meal Scan', result: 'Nutrition found', note: 'Meal → Nutrition', chips: ['Calories', 'Protein', 'Fiber'] },
