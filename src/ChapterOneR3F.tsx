@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, OrbitControls, PerspectiveCamera, RoundedBox } from '@react-three/drei';
+import { Float, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
 import type { Group } from 'three';
@@ -9,10 +9,10 @@ function DataParticles() {
   useFrame((state) => {
     if (!group.current) return;
     group.current.children.forEach((child, index) => {
-      const t = (state.clock.elapsedTime * 0.32 + index * 0.075) % 1;
-      child.position.x = -1.45 + t * 2.9;
-      child.position.y = -0.1 + Math.sin(t * Math.PI) * 0.45 + (index % 3) * 0.04;
-      child.position.z = 0.45 - t * 0.16;
+      const t = (state.clock.elapsedTime * 0.34 + index * 0.07) % 1;
+      child.position.x = -1.7 + t * 3.15;
+      child.position.y = -0.14 + Math.sin(t * Math.PI) * 0.48 + (index % 3) * 0.04;
+      child.position.z = 0.46 - t * 0.16;
     });
   });
   return (
@@ -27,26 +27,6 @@ function DataParticles() {
   );
 }
 
-function PhoneModel() {
-  const phone = useRef<Group>(null);
-  useFrame((state) => {
-    if (phone.current) phone.current.position.y = Math.sin(state.clock.elapsedTime * 0.62) * 0.045;
-  });
-  return (
-    <group ref={phone} position={[1.45, -0.13, 0.02]} rotation={[0.02, -0.25, 0.02]}>
-      <RoundedBox args={[1.03, 2.08, 0.14]} radius={0.18} smoothness={10}>
-        <meshStandardMaterial color="#02050a" roughness={0.24} metalness={0.68} />
-      </RoundedBox>
-      <RoundedBox position={[0, 0, 0.085]} args={[0.9, 1.9, 0.035]} radius={0.14} smoothness={10}>
-        <meshBasicMaterial color="#06101b" />
-      </RoundedBox>
-      <RoundedBox position={[0, 0.88, 0.115]} args={[0.33, 0.07, 0.035]} radius={0.04} smoothness={6}>
-        <meshBasicMaterial color="#000000" />
-      </RoundedBox>
-    </group>
-  );
-}
-
 function Scene() {
   return (
     <>
@@ -56,7 +36,6 @@ function Scene() {
       <pointLight position={[-1.5, 0.2, 2.2]} intensity={2.7} color="#15c77a" />
       <Float speed={0.85} rotationIntensity={0.03} floatIntensity={0.12}>
         <DataParticles />
-        <PhoneModel />
       </Float>
       <OrbitControls enabled={false} />
     </>
@@ -64,63 +43,95 @@ function Scene() {
 }
 
 function VectorMeal() {
-  return (
-    <svg className="vector-meal" viewBox="0 0 760 500" role="img" aria-label="premium illustrated healthy meal bowl">
-      <defs>
-        <radialGradient id="plateGlow" cx="50%" cy="42%" r="58%">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="0.62" stopColor="#e6eee7" />
-          <stop offset="1" stopColor="#a5b4aa" />
-        </radialGradient>
-        <radialGradient id="bowlInside" cx="50%" cy="42%" r="62%">
-          <stop offset="0" stopColor="#1e352a" />
-          <stop offset="1" stopColor="#07110d" />
-        </radialGradient>
-        <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="24" stdDeviation="22" floodColor="#000000" floodOpacity="0.55" />
-        </filter>
-        <filter id="foodShadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="8" stdDeviation="5" floodColor="#000000" floodOpacity="0.26" />
-        </filter>
-      </defs>
-      <ellipse cx="342" cy="288" rx="292" ry="112" fill="url(#plateGlow)" filter="url(#softShadow)" />
-      <ellipse cx="342" cy="252" rx="240" ry="88" fill="url(#bowlInside)" opacity="0.97" />
-      <path d="M116 252c36 98 410 98 452 0" fill="none" stroke="#f4f0df" strokeWidth="56" strokeLinecap="round" opacity="0.92" />
+  const grains = Array.from({ length: 38 }).map((_, i) => {
+    const x = 224 + (i % 9) * 18 + (i % 2) * 4;
+    const y = 242 + Math.floor(i / 9) * 16 + (i % 3) * 3;
+    return <ellipse key={i} cx={x} cy={y} rx="8" ry="4" fill="#fff0ce" opacity="0.92" transform={`rotate(${(i * 23) % 90} ${x} ${y})`} />;
+  });
 
-      <g filter="url(#foodShadow)">
-        <path d="M174 214c44-62 132-64 174-4-28 35-124 47-174 4z" fill="#f4dfb7" />
-        <g fill="#fff1d1">
-          <ellipse cx="220" cy="214" rx="13" ry="8" /><ellipse cx="246" cy="199" rx="12" ry="8" /><ellipse cx="276" cy="213" rx="12" ry="8" /><ellipse cx="303" cy="198" rx="11" ry="8" /><ellipse cx="330" cy="213" rx="12" ry="8" />
-        </g>
-        <path d="M365 195c63-34 127-20 151 34-52 23-124 24-151-34z" fill="#54d177" />
-        <path d="M394 201c38-14 81-4 99 22-41 13-84 10-99-22z" fill="#8ee35d" opacity="0.9" />
-        <path d="M264 270c24-74 76-103 137-75-16 76-73 104-137 75z" fill="#76d847" />
-        <path d="M296 261c19-48 55-67 91-52-17 48-48 67-91 52z" fill="#b4ee79" opacity="0.85" />
+  return (
+    <svg className="vector-meal" viewBox="0 0 820 560" role="img" aria-label="detailed vector healthy meal bowl">
+      <defs>
+        <radialGradient id="plateOuter" cx="46%" cy="38%" r="62%">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="0.58" stopColor="#edf3ec" />
+          <stop offset="1" stopColor="#9aa89d" />
+        </radialGradient>
+        <radialGradient id="darkBowl" cx="48%" cy="38%" r="64%">
+          <stop offset="0" stopColor="#243b30" />
+          <stop offset="0.62" stopColor="#12231b" />
+          <stop offset="1" stopColor="#050d0a" />
+        </radialGradient>
+        <linearGradient id="chicken" x1="0" x2="1">
+          <stop offset="0" stopColor="#f1b46c" />
+          <stop offset="1" stopColor="#b86b34" />
+        </linearGradient>
+        <linearGradient id="avo" x1="0" x2="1">
+          <stop offset="0" stopColor="#d9f58a" />
+          <stop offset="1" stopColor="#55c746" />
+        </linearGradient>
+        <filter id="mealShadow" x="-25%" y="-25%" width="150%" height="150%">
+          <feDropShadow dx="0" dy="26" stdDeviation="20" floodColor="#000" floodOpacity="0.58" />
+        </filter>
+        <filter id="ingredientShadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="#000" floodOpacity="0.24" />
+        </filter>
+        <clipPath id="mealClip"><ellipse cx="365" cy="286" rx="285" ry="165" /></clipPath>
+      </defs>
+
+      <ellipse cx="365" cy="304" rx="326" ry="182" fill="url(#plateOuter)" filter="url(#mealShadow)" />
+      <ellipse cx="365" cy="286" rx="285" ry="154" fill="url(#darkBowl)" />
+      <g clipPath="url(#mealClip)" filter="url(#ingredientShadow)">
+        <path d="M124 270 C186 178 322 163 416 230 C359 312 222 338 124 270Z" fill="#f4dfb7" />
+        <g>{grains}</g>
+
         <g>
-          <ellipse cx="207" cy="175" rx="28" ry="28" fill="#ef4637" />
-          <ellipse cx="265" cy="160" rx="30" ry="30" fill="#ff5a43" />
-          <ellipse cx="319" cy="178" rx="28" ry="28" fill="#e93e32" />
-          <path d="M190 148c38-23 101-16 151 15" stroke="#6bd873" strokeWidth="8" fill="none" strokeLinecap="round" />
-          <path d="M248 129c10 28 12 60 4 98" stroke="#41b85b" strokeWidth="6" fill="none" strokeLinecap="round" />
+          <path d="M400 190 C487 140 591 168 638 249 C548 282 449 263 400 190Z" fill="#41bf68" />
+          <path d="M426 202 C493 170 570 188 610 242 C548 262 471 250 426 202Z" fill="#9fe86c" opacity="0.8" />
+          <path d="M452 210 C500 192 552 204 582 236" fill="none" stroke="#218c4d" strokeWidth="8" opacity="0.45" />
         </g>
+
         <g>
-          <rect x="424" y="245" width="62" height="44" rx="13" fill="#d88b4a" />
-          <rect x="498" y="227" width="74" height="48" rx="15" fill="#c5793d" />
-          <rect x="444" y="203" width="70" height="48" rx="15" fill="#e0a45b" />
-          <path d="M438 239c54 20 92 18 130-10" stroke="#9d5b30" strokeWidth="4" opacity="0.35" />
+          <path d="M286 347 C301 266 360 215 443 225 C431 322 366 373 286 347Z" fill="url(#avo)" />
+          <path d="M320 330 C336 278 372 250 423 250 C404 307 370 337 320 330Z" fill="#f4ef9f" opacity="0.55" />
+          <path d="M330 344 C353 293 384 259 429 232" stroke="#3fa84a" strokeWidth="7" fill="none" opacity="0.5" />
         </g>
+
         <g>
-          <path d="M548 170c42 6 72 35 83 78-44 15-83 0-107-41z" fill="#69d46d" />
-          <path d="M558 186c32 7 53 27 63 53-31 8-61-1-80-29z" fill="#b7f084" opacity="0.75" />
-          <path d="M582 160c37-3 70 17 86 50-35 20-77 6-94-22z" fill="#2bbf6b" />
+          <ellipse cx="236" cy="182" rx="34" ry="34" fill="#f04437" />
+          <ellipse cx="296" cy="160" rx="38" ry="38" fill="#ff5a43" />
+          <ellipse cx="360" cy="184" rx="34" ry="34" fill="#e93e32" />
+          <ellipse cx="302" cy="209" rx="25" ry="25" fill="#ff624d" />
+          <path d="M220 139 C268 111 350 121 406 164" stroke="#65d870" strokeWidth="9" fill="none" strokeLinecap="round" />
+          <path d="M303 114 C315 158 312 214 292 255" stroke="#36aa56" strokeWidth="7" fill="none" strokeLinecap="round" />
+          <circle cx="285" cy="149" r="8" fill="#ffb8a9" opacity="0.65" />
         </g>
-        <g fill="#914bd8" opacity="0.95">
-          <path d="M518 303c26-45 68-52 111-30-29 41-74 54-111 30z" />
-          <path d="M554 312c25-24 55-28 91-12-29 22-59 29-91 12z" fill="#b869ef" />
+
+        <g>
+          <rect x="480" y="268" width="78" height="54" rx="16" fill="url(#chicken)" />
+          <rect x="568" y="245" width="88" height="58" rx="18" fill="#c7793d" />
+          <rect x="520" y="204" width="82" height="58" rx="17" fill="#e0a45b" />
+          <path d="M494 294 C532 313 601 302 648 270" stroke="#8f4f2a" strokeWidth="6" opacity="0.32" fill="none" />
+          <path d="M536 225 L586 253 M498 286 L548 306 M585 264 L642 286" stroke="#6f3e25" strokeWidth="4" opacity="0.45" />
+        </g>
+
+        <g>
+          <path d="M594 156 C645 160 686 197 704 252 C648 270 599 247 570 196Z" fill="#68d46d" />
+          <path d="M610 178 C648 185 676 210 688 243 C648 252 614 236 590 204Z" fill="#bcf08b" opacity="0.75" />
+          <path d="M650 144 C698 136 742 161 765 207 C718 236 664 214 641 177Z" fill="#2abf6b" />
+          <path d="M620 188 C650 202 674 224 686 250 M660 162 C697 178 728 194 756 214" stroke="#168a49" strokeWidth="6" opacity="0.38" fill="none" />
+        </g>
+
+        <g>
+          <path d="M566 360 C596 307 654 293 722 324 C678 379 616 395 566 360Z" fill="#914bd8" />
+          <path d="M604 374 C632 342 677 333 732 356 C690 388 646 400 604 374Z" fill="#b869ef" />
+          <path d="M590 354 C632 344 676 343 720 351" stroke="#6c32a7" strokeWidth="5" opacity="0.45" />
         </g>
       </g>
-      <ellipse className="meal-scan-ring" cx="344" cy="252" rx="282" ry="94" fill="none" stroke="#20d884" strokeWidth="6" opacity="0.9" />
-      <line className="meal-scan-line" x1="350" y1="112" x2="350" y2="375" stroke="#20d884" strokeWidth="6" strokeLinecap="round" opacity="0.78" />
+
+      <ellipse cx="365" cy="286" rx="302" ry="174" fill="none" stroke="rgba(255,255,255,.32)" strokeWidth="14" opacity="0.75" />
+      <ellipse className="meal-scan-ring" cx="365" cy="286" rx="316" ry="132" fill="none" stroke="#20d884" strokeWidth="6" opacity="0.95" />
+      <line className="meal-scan-line" x1="365" y1="112" x2="365" y2="455" stroke="#20d884" strokeWidth="6" strokeLinecap="round" opacity="0.78" />
     </svg>
   );
 }
@@ -144,6 +155,15 @@ function PhoneOverlay() {
   );
 }
 
+function PhoneDevice() {
+  return (
+    <div className="r3f-phone-device" aria-label="Fit10X nutrition scan phone UI">
+      <div className="r3f-phone-notch" />
+      <PhoneOverlay />
+    </div>
+  );
+}
+
 export default function ChapterOneR3F() {
   return (
     <div className="r3f-hero-stage">
@@ -154,7 +174,7 @@ export default function ChapterOneR3F() {
         </Canvas>
       </div>
       <div className="r3f-scan-badge">AI scanning</div>
-      <PhoneOverlay />
+      <PhoneDevice />
       <div className="r3f-flow"><span>You eat</span><i /> <span>AI understands</span><i /> <span>Not connected</span><i /> <span>Progress disappears</span></div>
     </div>
   );
