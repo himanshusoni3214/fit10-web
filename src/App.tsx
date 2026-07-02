@@ -2,10 +2,11 @@ import { motion } from 'framer-motion';
 import { ArrowDown, Mail, Phone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ChapterOneR3F from './ChapterOneR3F';
+import ChapterTwoStory from './ChapterTwoStory';
 import './chapter-one-r3f.css';
+import './chapter-two-story.css';
 
 const chapters = [
-  { number: '02', title: 'AI understands what you eat.', text: 'One scan turns a real meal into calories, protein, fiber, and micronutrients.', label: 'AI Meal Scan', result: 'Nutrition found', note: 'Meal → Nutrition', chips: ['Calories', 'Protein', 'Fiber'] },
   { number: '03', title: 'Turn meals into smart recipes.', text: 'Fit10X creates recipes, ingredients, macros, serving size, and a grocery list.', label: 'Recipe Builder', result: 'Recipe ready', note: 'Meal → Plan', chips: ['Recipe', 'Macros', 'Shopping'] },
   { number: '04', title: 'Shop smarter. Choose better.', text: 'Ingredients become a cart and AI suggests better, cheaper, healthier options.', label: 'Grocery Intelligence', result: 'Better choices', note: 'Plan → Shop', chips: ['Cart', 'Swaps', 'Budget'] },
   { number: '05', title: 'Made for your health.', text: 'Weight loss, diabetes, heart health, pregnancy, allergies, kidney care, and more.', label: 'Health Mode', result: 'Personalized plan', note: 'Everything → You', chips: ['Diabetes', 'Heart', 'Allergies'] },
@@ -55,7 +56,9 @@ function App() {
 
       <section className="manifesto"><p>Fit10X starts with one person.</p><h2>Then every feature follows their food journey.</h2></section>
 
-      <section id="journey" className="scroll-story">
+      <ChapterTwoStory />
+
+      <section className="scroll-story">
         <div className="sticky-visual">
           <div className="phone-shell">
             <motion.div className="phone-screen" key={activeChapter.title} initial={{ opacity: 0.7, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
